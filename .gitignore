@@ -1,0 +1,59 @@
+# ===== Data =====
+# Ignore full dataset CSVs (too large for git)
+Final_*.csv
+*.tsv
+*.parquet
+# Keep data/samples.csv (small sample file)
+!data/samples.csv
+data_cache/
+
+# ===== Model Artifacts =====
+*.pt
+*.bin
+*.safetensors
+*.ckpt
+checkpoints/
+output/
+*.onnx
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# ===== Jupyter =====
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ===== Environment =====
+.env
+.venv/
+venv/
+env/
+*.env
+
+# ===== IDE =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== Misc =====
+*.log
+*.tmp
+*.bak
+*.docx
+wandb/
+runs/
+tensorboard/

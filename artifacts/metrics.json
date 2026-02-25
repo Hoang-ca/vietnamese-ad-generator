@@ -1,0 +1,98 @@
+{
+    "evaluation": {
+        "full_test_set": {
+            "num_samples": 4452,
+            "models": {
+                "BARTpho-word-base": {
+                    "BLEU": 0.4214,
+                    "ROUGE-1": 0.7838,
+                    "ROUGE-2": 0.5530,
+                    "ROUGE-L": 0.4443
+                },
+                "mT5-Small": {
+                    "BLEU": 0.1063,
+                    "ROUGE-1": 0.5852,
+                    "ROUGE-2": 0.2721,
+                    "ROUGE-L": 0.3213
+                },
+                "ViT5-base": {
+                    "BLEU": 0.2229,
+                    "ROUGE-1": 0.8440,
+                    "ROUGE-2": 0.5779,
+                    "ROUGE-L": 0.4183
+                },
+                "Qwen3-0.6B": {
+                    "BLEU": 0.2711,
+                    "ROUGE-1": 0.8504,
+                    "ROUGE-2": 0.5978,
+                    "ROUGE-L": 0.4254
+                }
+            }
+        },
+        "human_evaluation_100_samples": {
+            "num_samples": 100,
+            "models": {
+                "BARTpho-word-base": {
+                    "grammar_and_logic": 0.537,
+                    "readability": 0.562,
+                    "relevance": 0.652
+                },
+                "mT5-Small": {
+                    "grammar_and_logic": 0.254,
+                    "readability": 0.280,
+                    "relevance": 0.504
+                },
+                "ViT5-base": {
+                    "grammar_and_logic": 0.660,
+                    "readability": 0.670,
+                    "relevance": 0.768
+                },
+                "Qwen3-0.6B": {
+                    "grammar_and_logic": 0.643,
+                    "readability": 0.635,
+                    "relevance": 0.688
+                }
+            }
+        }
+    },
+    "model": {
+        "base_model": "Qwen/Qwen3-0.6B",
+        "total_params": 601925632,
+        "trainable_params": 5046272,
+        "trainable_percent": 0.8384,
+        "lora_config": {
+            "r": 8,
+            "alpha": 16,
+            "dropout": 0.05,
+            "target_modules": [
+                "q_proj",
+                "k_proj",
+                "v_proj",
+                "o_proj",
+                "gate_proj",
+                "up_proj",
+                "down_proj"
+            ]
+        },
+        "added_tokens": 1083,
+        "final_vocab_size": 152746
+    },
+    "dataset": {
+        "source": "Tiki e-commerce platform",
+        "ad_generator": "GPT-4o mini API",
+        "total_records": 89029,
+        "train_samples": 80125,
+        "val_samples": 4452,
+        "test_samples": 4452,
+        "split_ratio": "90:05:05"
+    },
+    "training": {
+        "hardware": "2x NVIDIA Tesla T4 (16 GB each)",
+        "platform": "Kaggle",
+        "precision": "FP16",
+        "optimizer": "adamw_torch_fused",
+        "effective_batch_size": 64,
+        "learning_rate_schedule": "3e-4 -> 2e-4 -> 1e-4 -> 5e-5 (manual decay on val plateau)",
+        "max_epochs": 10
+    }
+}
