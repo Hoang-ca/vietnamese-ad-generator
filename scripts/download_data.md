@@ -35,7 +35,7 @@ The training data consists of Vietnamese e-commerce product advertisements with 
 2. Place them in a `data/` directory at the project root:
 
 ```
-advertisement-lora/
+vietnamese-ad-generator/
 └── data/
     ├── Final_advertisement_filtered_adv_lte1024_train_90.csv
     ├── Final_advertisement_filtered_adv_lte1024_val_5.csv

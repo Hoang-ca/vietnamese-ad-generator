@@ -1,6 +1,6 @@
-# 🎯 Vietnamese Advertisement Generator — Qwen3-0.6B LoRA
+# 🎯 Vietnamese Advertisement Generator
 
-> Fine-tuning [Qwen3-0.6B](https://huggingface.co/Qwen/Qwen3-0.6B) with LoRA to automatically generate Vietnamese product advertisements from product name and description.
+> Comparative study of **4 fine-tuned language models** (BARTpho, mT5, ViT5, Qwen3-0.6B) for automatically generating Vietnamese product advertisements from product name and description. The best-performing model — **Qwen3-0.6B with LoRA** — is published on HuggingFace for inference.
 
 [![HuggingFace Model](https://img.shields.io/badge/🤗_HuggingFace-vmhdaica/advertisement--lora-blue)](https://huggingface.co/vmhdaica/advertisement-lora)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/downloads/)
@@ -15,15 +15,15 @@ E-commerce platforms require large volumes of product advertisements. Writing th
 ## 🏗️ Approach
 
 ```
-Product Name + Description → ChatML Prompt → LoRA-tuned Qwen3-0.6B → Advertisement
+Product Name + Description → Fine-tuned LM → Advertisement
 ```
 
 **Pipeline overview:**
 1. **Data Collection**: Scraped 103K+ product records from Tiki e-commerce platform; used GPT-4o mini to generate structured advertisements following a problem/solution format
 2. **Data Preparation**: Formatted as ChatML conversations with prompt/completion label masking; filtered to ≤1,024 tokens → 89,029 final samples
 3. **Tokenizer Extension**: Added 1,083 emoji/symbol tokens commonly used in Vietnamese ads
-4. **LoRA Fine-tuning**: Applied LoRA adapters (rank 8) to all attention and MLP projection layers → only 0.84% of parameters trainable
-5. **Multi-Model Comparison**: Trained and evaluated 4 models (BARTpho, mT5, ViT5, Qwen3-0.6B) with both automated metrics and human assessment
+4. **Multi-Model Fine-tuning**: Trained **4 models** with LoRA adapters — BARTpho-word-base, mT5-Small, ViT5-base, and Qwen3-0.6B — to compare Seq2Seq vs. causal LM approaches for Vietnamese ad generation
+5. **Comprehensive Evaluation**: Compared all 4 models using both automated metrics (BLEU, ROUGE) and human evaluation (grammar, readability, relevance) on the same test set
 
 ## 📊 Dataset
 
@@ -40,14 +40,15 @@ Product Name + Description → ChatML Prompt → LoRA-tuned Qwen3-0.6B → Adver
 
 ## ⚙️ Training Configuration
 
+**All 4 models** were fine-tuned with LoRA under comparable settings:
+
 | Hyperparameter | Value |
 |----------------|-------|
-| Base Model | [Qwen/Qwen3-0.6B](https://huggingface.co/Qwen/Qwen3-0.6B) |
+| Models Trained | BARTpho-word-base, mT5-Small, ViT5-base, **Qwen3-0.6B** |
 | LoRA Rank (r) | 8 |
 | LoRA Alpha | 16 (Qwen3) / 32 (Seq2Seq models) |
 | LoRA Dropout | 0.05 |
-| LoRA Targets | `q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj` |
-| Trainable Params | 5,046,272 / 601,925,632 (0.84%) |
+| LoRA Targets | All attention + MLP projection layers |
 | Effective Batch Size | 64 |
 | Learning Rate | 3e-4 → 2e-4 → 1e-4 → 5e-5 (manual decay) |
 | Max Epochs | 10 (early stop on val plateau) |
@@ -55,7 +56,9 @@ Product Name + Description → ChatML Prompt → LoRA-tuned Qwen3-0.6B → Adver
 | Optimizer | AdamW (fused) |
 | Hardware | 2× NVIDIA T4 16GB (Kaggle) |
 
-## 📈 Evaluation Results
+> The published model on HuggingFace is **Qwen3-0.6B** (best ROUGE-1/ROUGE-2) with only 0.84% trainable parameters via LoRA.
+
+## 📈 Evaluation Results (4 Models Compared)
 
 ### Automated Metrics — Full Test Set (4,452 samples)
 
@@ -64,9 +67,9 @@ Product Name + Description → ChatML Prompt → LoRA-tuned Qwen3-0.6B → Adver
 | BARTpho-word-base | **0.4214** | 0.7838 | 0.5530 | **0.4443** |
 | mT5-Small | 0.1063 | 0.5852 | 0.2721 | 0.3213 |
 | ViT5-base | 0.2229 | 0.8440 | 0.5779 | 0.4183 |
-| **Qwen3-0.6B (ours)** | 0.2711 | **0.8504** | **0.5978** | 0.4254 |
+| **Qwen3-0.6B** ⭐ | 0.2711 | **0.8504** | **0.5978** | 0.4254 |
 
-Qwen3-0.6B achieved the highest **ROUGE-1** and **ROUGE-2** scores, indicating superior content overlap with reference ads. BARTpho-word-base led in **BLEU** (n-gram precision) and **ROUGE-L** (longest common subsequence).
+**Qwen3-0.6B** was selected as the best overall model — achieving the highest **ROUGE-1** and **ROUGE-2** scores, indicating superior content coverage. BARTpho-word-base led in **BLEU** (n-gram precision) and **ROUGE-L** (longest common subsequence), but produced shorter, less complete outputs.
 
 ### Human Evaluation — 100-Sample Subset (scored 0–1)
 
@@ -128,8 +131,8 @@ print(generated)
 
 ```bash
 # 1. Clone this repository
-git clone https://github.com/Hoang-ca/advertisement-lora.git
-cd advertisement-lora
+git clone https://github.com/Hoang-ca/vietnamese-ad-generator.git
+cd vietnamese-ad-generator
 
 # 2. Install dependencies
 pip install -r requirements.txt
@@ -143,7 +146,7 @@ pip install -r requirements.txt
 ## 📁 Repository Structure
 
 ```
-advertisement-lora/
+vietnamese-ad-generator/
 ├── README.md                          # This file
 ├── MODEL_CARD.md                      # Model card with limitations & ethical notes
 ├── requirements.txt                   # Python dependencies with versions
